@@ -113,17 +113,17 @@
     </div>
 
     <script type="module">
-    import init, { BlackScholesCalculator } from './pkg/black_scholes_calculator.js';
-    
-    async function run() {
-        // Initialize with explicit path to wasm file
-        await init('./pkg/black_scholes_calculator_bg.wasm');
+        import init, { BlackScholesCalculator } from './pkg/black_scholes_calculator.js';
         
-        // Now import and run the main bootstrap
-        const bootstrap = await import('./bootstrap.js');
-    }
-    
-    run().catch(console.error);
+        async function run() {
+            // Initialize with explicit path to wasm file
+            await init('./pkg/black_scholes_calculator_bg.wasm');
+            
+            // Now import and run the main bootstrap
+            const bootstrap = await import('./bootstrap.js');
+        }
+        
+        run().catch(console.error);
     </script>
 </body>
 </html>
