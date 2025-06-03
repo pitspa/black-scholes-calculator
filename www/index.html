@@ -112,6 +112,18 @@
         </div>
     </div>
 
-    <script type="module" src="./bootstrap.js"></script>
+    <script type="module">
+    import init, { BlackScholesCalculator } from './pkg/black_scholes_calculator.js';
+    
+    async function run() {
+        // Initialize with explicit path to wasm file
+        await init('./pkg/black_scholes_calculator_bg.wasm');
+        
+        // Now import and run the main bootstrap
+        const bootstrap = await import('./bootstrap.js');
+    }
+    
+    run().catch(console.error);
+    </script>
 </body>
 </html>
