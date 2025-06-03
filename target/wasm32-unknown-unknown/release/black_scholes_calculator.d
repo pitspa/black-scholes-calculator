@@ -1,0 +1,1 @@
+C:\Users\Pietro\Desktop\rust_codes\black_scholes_calculator__rust\target\wasm32-unknown-unknown\release\black_scholes_calculator.wasm: C:\Users\Pietro\Desktop\rust_codes\black_scholes_calculator__rust\src\lib.rs
