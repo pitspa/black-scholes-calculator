@@ -24,9 +24,9 @@ jobs:
     - name: Build WASM
       run: |
         wasm-pack build --target web --out-dir www/pkg
-        echo "Contents of www directory:"
-        ls -la www/
-        echo "Contents of www/pkg directory:"
+        # Remove the .gitignore that wasm-pack creates
+        rm -f www/pkg/.gitignore
+        echo "Contents of www/pkg after removing .gitignore:"
         ls -la www/pkg/
     
     - name: Deploy to GitHub Pages
