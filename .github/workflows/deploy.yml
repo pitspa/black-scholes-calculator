@@ -22,10 +22,17 @@ jobs:
       run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
     
     - name: Build WASM
-      run: wasm-pack build --target web --out-dir www/pkg
+      run: |
+        wasm-pack build --target web --out-dir www/pkg
+        echo "Contents of www directory:"
+        ls -la www/
+        echo "Contents of www/pkg directory:"
+        ls -la www/pkg/
     
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./www
+        force_orphan: true
+        enable_jekyll: false
