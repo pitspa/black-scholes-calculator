@@ -2,6 +2,7 @@ import init, { BlackScholesCalculator } from './pkg/black_scholes_calculator.js'
 
 let calculator;
 let pricesChart, deltaChart, gammaChart, thetaChart, vegaChart, rhoChart;
+let callDistributionChart, putDistributionChart;
 
 async function run() {
     await init();
@@ -236,6 +237,180 @@ function initializeCharts() {
             }
         }
     });
+
+    // Call Distribution Chart
+    callDistributionChart = new Chart(document.getElementById('callDistributionChart'), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Probability Density',
+                data: [],
+                borderColor: '#2196f3',
+                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                tension: 0.1,
+                yAxisID: 'y',
+                fill: true
+            }, {
+                label: 'Call Payoff',
+                data: [],
+                borderColor: '#4caf50',
+                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                borderWidth: 3,
+                tension: 0,
+                yAxisID: 'y1',
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                annotation: {
+                    annotations: {
+                        strike: {
+                            type: 'line',
+                            xMin: 0,
+                            xMax: 0,
+                            borderColor: 'rgba(255, 99, 132, 0.5)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            label: {
+                                display: true,
+                                content: 'Strike',
+                                position: 'start'
+                            }
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Stock Price at Maturity ($)'
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Probability Density'
+                    },
+                    beginAtZero: true
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Option Payoff ($)'
+                    },
+                    beginAtZero: true,
+                    grid: {
+                        drawOnChartArea: false,
+                    }
+                }
+            }
+        }
+    });
+
+    // Put Distribution Chart
+    putDistributionChart = new Chart(document.getElementById('putDistributionChart'), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Probability Density',
+                data: [],
+                borderColor: '#2196f3',
+                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                tension: 0.1,
+                yAxisID: 'y',
+                fill: true
+            }, {
+                label: 'Put Payoff',
+                data: [],
+                borderColor: '#f44336',
+                backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                borderWidth: 3,
+                tension: 0,
+                yAxisID: 'y1',
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                annotation: {
+                    annotations: {
+                        strike: {
+                            type: 'line',
+                            xMin: 0,
+                            xMax: 0,
+                            borderColor: 'rgba(255, 99, 132, 0.5)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            label: {
+                                display: true,
+                                content: 'Strike',
+                                position: 'start'
+                            }
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Stock Price at Maturity ($)'
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Probability Density'
+                    },
+                    beginAtZero: true
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Option Payoff ($)'
+                    },
+                    beginAtZero: true,
+                    grid: {
+                        drawOnChartArea: false,
+                    }
+                }
+            }
+        }
+    });
 }
 
 function calculate() {
@@ -253,6 +428,9 @@ function calculate() {
     // Calculate Greeks
     const greeks = calculator.calculate_greeks(spot, strike, rate, volatility, maturity);
     displayGreeks(greeks);
+    
+    // Update distribution charts
+    updateDistributionCharts(spot, strike, rate, volatility, maturity);
 
     // Update charts with current parameter as variable
     updateCharts();
@@ -294,6 +472,43 @@ function displayGreeks(greeks) {
             <p>${greeks.rho_put.toFixed(4)}</p>
         </div>
     `;
+}
+
+function updateDistributionCharts(spot, strike, rate, volatility, maturity) {
+    // Get distribution data
+    const distributionData = calculator.calculate_distribution(
+        spot, strike, rate, volatility, maturity, 200
+    );
+    
+    // Format labels
+    const labels = distributionData.stock_prices.map(price => price.toFixed(2));
+    
+    // Update Call Distribution Chart
+    callDistributionChart.data.labels = labels;
+    callDistributionChart.data.datasets[0].data = distributionData.probabilities;
+    callDistributionChart.data.datasets[1].data = distributionData.call_payoffs;
+    
+    // Update strike line position
+    const strikeIndex = distributionData.stock_prices.findIndex(price => price >= strike);
+    if (callDistributionChart.options.plugins.annotation) {
+        callDistributionChart.options.plugins.annotation.annotations.strike.xMin = strikeIndex;
+        callDistributionChart.options.plugins.annotation.annotations.strike.xMax = strikeIndex;
+    }
+    
+    callDistributionChart.update();
+    
+    // Update Put Distribution Chart
+    putDistributionChart.data.labels = labels;
+    putDistributionChart.data.datasets[0].data = distributionData.probabilities;
+    putDistributionChart.data.datasets[1].data = distributionData.put_payoffs;
+    
+    // Update strike line position
+    if (putDistributionChart.options.plugins.annotation) {
+        putDistributionChart.options.plugins.annotation.annotations.strike.xMin = strikeIndex;
+        putDistributionChart.options.plugins.annotation.annotations.strike.xMax = strikeIndex;
+    }
+    
+    putDistributionChart.update();
 }
 
 function onVariableChange() {

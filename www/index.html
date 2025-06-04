@@ -6,6 +6,7 @@
     <title>Black-Scholes Options Calculator</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.2.1/dist/chartjs-plugin-annotation.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -56,6 +57,20 @@
             <h2>Greeks</h2>
             <div class="greeks-grid" id="greeks-display">
                 <!-- Greeks will be populated here -->
+            </div>
+        </div>
+
+        <div class="distribution-section">
+            <h2>Risk-Neutral Distribution at Maturity</h2>
+            <div class="distribution-grid">
+                <div class="chart-container">
+                    <h3>Call Option Payoff & Probability Distribution</h3>
+                    <canvas id="callDistributionChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Put Option Payoff & Probability Distribution</h3>
+                    <canvas id="putDistributionChart"></canvas>
+                </div>
             </div>
         </div>
 

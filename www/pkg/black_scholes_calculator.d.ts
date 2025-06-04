@@ -6,6 +6,7 @@ export class BlackScholesCalculator {
   calculate_option_prices(spot: number, strike: number, rate: number, volatility: number, time_to_maturity: number): any;
   calculate_greeks(spot: number, strike: number, rate: number, volatility: number, time_to_maturity: number): any;
   parameter_sweep(base_spot: number, base_strike: number, base_rate: number, base_volatility: number, base_maturity: number, parameter: string, range: number, steps: number): any;
+  calculate_distribution(spot: number, strike: number, rate: number, volatility: number, time_to_maturity: number, num_points: number): any;
 }
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
@@ -17,6 +18,7 @@ export interface InitOutput {
   readonly blackscholescalculator_calculate_option_prices: (a: number, b: number, c: number, d: number, e: number, f: number) => any;
   readonly blackscholescalculator_calculate_greeks: (a: number, b: number, c: number, d: number, e: number, f: number) => any;
   readonly blackscholescalculator_parameter_sweep: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number) => any;
+  readonly blackscholescalculator_calculate_distribution: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => any;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_export_2: WebAssembly.Table;

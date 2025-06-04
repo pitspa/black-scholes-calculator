@@ -1,13 +1,14 @@
 {
- "name": "black-scholes-calculator",
- "version": "1.0.0",
- "description": "Black-Scholes Options Calculator with Rust and WebAssembly",
- "main": "index.js",
- "scripts": {
-   "build": "wasm-pack build --target web --out-dir www/pkg",
-   "serve": "python3 -m http.server 8000 --directory www"
- },
- "devDependencies": {
-   "wasm-pack": "^0.12.1"
- }
+  "name": "black-scholes-calculator",
+  "version": "1.0.0",
+  "description": "Black-Scholes Options Calculator with Rust and WebAssembly",
+  "main": "index.js",
+  "scripts": {
+    "build": "wasm-pack build --target web --out-dir www/pkg && rm -f www/pkg/.gitignore",
+    "serve": "python3 -m http.server 8000 --directory www",
+    "dev": "npm run build && npm run serve"
+  },
+  "devDependencies": {
+    "wasm-pack": "^0.12.1"
+  }
 }

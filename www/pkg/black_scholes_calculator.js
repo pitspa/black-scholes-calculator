@@ -216,6 +216,19 @@ export class BlackScholesCalculator {
         const ret = wasm.blackscholescalculator_parameter_sweep(this.__wbg_ptr, base_spot, base_strike, base_rate, base_volatility, base_maturity, ptr0, len0, range, steps);
         return ret;
     }
+    /**
+     * @param {number} spot
+     * @param {number} strike
+     * @param {number} rate
+     * @param {number} volatility
+     * @param {number} time_to_maturity
+     * @param {number} num_points
+     * @returns {any}
+     */
+    calculate_distribution(spot, strike, rate, volatility, time_to_maturity, num_points) {
+        const ret = wasm.blackscholescalculator_calculate_distribution(this.__wbg_ptr, spot, strike, rate, volatility, time_to_maturity, num_points);
+        return ret;
+    }
 }
 
 async function __wbg_load(module, imports) {

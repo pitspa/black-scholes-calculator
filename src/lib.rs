@@ -45,6 +45,16 @@ pub struct ParameterSweepResult {
     rho_puts: Vec<f64>,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct DistributionData {
+    stock_prices: Vec<f64>,
+    probabilities: Vec<f64>,
+    call_payoffs: Vec<f64>,
+    put_payoffs: Vec<f64>,
+    expected_stock_price: f64,
+    strike_price: f64,
+}
+
 #[wasm_bindgen]
 pub struct BlackScholesCalculator {
     normal: Normal,
@@ -244,6 +254,65 @@ impl BlackScholesCalculator {
         };
 
         serde_wasm_bindgen::to_value(&result).unwrap()
+    }
+
+    pub fn calculate_distribution(&self,
+        spot: f64,
+        strike: f64,
+        rate: f64,
+        volatility: f64,
+        time_to_maturity: f64,
+        num_points: usize
+    ) -> JsValue {
+        // Calculate parameters for the lognormal distribution
+        let drift = (rate - 0.5 * volatility.powi(2)) * time_to_maturity;
+        let diffusion = volatility * time_to_maturity.sqrt();
+        
+        // Expected stock price at maturity under risk-neutral measure
+        let expected_stock_price = spot * (rate * time_to_maturity).exp();
+        
+        // Generate stock price range (from 0.1*spot to 3*spot for good coverage)
+        let min_price = spot * 0.1;
+        let max_price = spot * 3.0;
+        let price_step = (max_price - min_price) / (num_points as f64 - 1.0);
+        
+        let mut stock_prices = Vec::with_capacity(num_points);
+        let mut probabilities = Vec::with_capacity(num_points);
+        let mut call_payoffs = Vec::with_capacity(num_points);
+        let mut put_payoffs = Vec::with_capacity(num_points);
+        
+        for i in 0..num_points {
+            let s_t = min_price + (i as f64) * price_step;
+            stock_prices.push(s_t);
+            
+            // Calculate lognormal probability density
+            if s_t > 0.0 {
+                let ln_s_t = s_t.ln();
+                let ln_s_0 = spot.ln();
+                let numerator = (ln_s_t - ln_s_0 - drift).powi(2);
+                let denominator = 2.0 * diffusion.powi(2);
+                let pdf = (1.0 / (s_t * diffusion * (2.0 * std::f64::consts::PI).sqrt())) 
+                    * (-numerator / denominator).exp();
+                probabilities.push(pdf);
+            } else {
+                probabilities.push(0.0);
+            }
+            
+            // Calculate payoffs
+            call_payoffs.push((s_t - strike).max(0.0));
+            put_payoffs.push((strike - s_t).max(0.0));
+        }
+        
+        let distribution_data = DistributionData {
+            stock_prices,
+            probabilities,
+            call_payoffs,
+            put_payoffs,
+            expected_stock_price,
+            strike_price: strike,
+        };
+        
+        serde_wasm_bindgen::to_value(&distribution_data).unwrap()
     }
 }
 
