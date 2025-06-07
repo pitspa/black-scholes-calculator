@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black-Scholes Options Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.2.1/dist/chartjs-plugin-annotation.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Black-Scholes Options Calculator</h1>
+        
+        <div class="input-section">
+            <h2>Input Parameters</h2>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="spot">Current Price (S)</label>
+                    <input type="number" id="spot" value="100" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="strike">Strike Price (K)</label>
+                    <input type="number" id="strike" value="100" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="volatility">Volatility (σ) %</label>
+                    <input type="number" id="volatility" value="20" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="rate">Interest Rate (r) %</label>
+                    <input type="number" id="rate" value="5" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="maturity">Time to Maturity (years)</label>
+                    <input type="number" id="maturity" value="1" step="0.01">
+                </div>
+            </div>
+            <button id="calculate" class="calculate-btn">Calculate</button>
+        </div>
+
+        <div class="results-section">
+            <h2>Option Prices</h2>
+            <div class="prices-grid">
+                <div class="price-box call">
+                    <h3>Call Option</h3>
+                    <p class="price" id="call-price">-</p>
+                </div>
+                <div class="price-box put">
+                    <h3>Put Option</h3>
+                    <p class="price" id="put-price">-</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="greeks-section">
+            <h2>Greeks</h2>
+            <div class="greeks-grid" id="greeks-display">
+                <!-- Greeks will be populated here -->
+            </div>
+        </div>
+
+        <div class="distribution-section">
+            <h2>Risk-Neutral Distribution at Maturity</h2>
+            <div class="distribution-grid">
+                <div class="chart-container">
+                    <h3>Call Option Payoff & Probability Distribution</h3>
+                    <canvas id="callDistributionChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Put Option Payoff & Probability Distribution</h3>
+                    <canvas id="putDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-control-section">
+            <h2>Interactive Analysis</h2>
+            <div class="control-grid">
+                <div class="control-group">
+                    <label for="variable-select">Select Variable Parameter:</label>
+                    <select id="variable-select">
+                        <option value="spot">Current Price (S)</option>
+                        <option value="strike">Strike Price (K)</option>
+                        <option value="volatility">Volatility (σ)</option>
+                        <option value="rate">Interest Rate (r)</option>
+                        <option value="maturity">Time to Maturity</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="range-input">Range (±):</label>
+                    <input type="number" id="range-input" value="30" step="1" min="1">
+                    <span class="range-unit" id="range-unit">$</span>
+                </div>
+                <button id="update-charts" class="update-btn">Update Charts</button>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <h2>Parameter Sensitivity Analysis</h2>
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>Option Prices</h3>
+                    <canvas id="pricesChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Delta</h3>
+                    <canvas id="deltaChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Gamma</h3>
+                    <canvas id="gammaChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Theta</h3>
+                    <canvas id="thetaChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Vega</h3>
+                    <canvas id="vegaChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Rho</h3>
+                    <canvas id="rhoChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import init, { BlackScholesCalculator } from './pkg/black_scholes_calculator.js';
+        
+        async function run() {
+            // Initialize with explicit path to wasm file
+            await init('./pkg/black_scholes_calculator_bg.wasm');
+            
+            // Now import and run the main bootstrap
+            const bootstrap = await import('./bootstrap.js');
+        }
+        
+        run().catch(console.error);
+    </script>
+</body>
+</html>
