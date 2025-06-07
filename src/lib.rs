@@ -135,8 +135,8 @@ impl BlackScholesCalculator {
             delta_call,
             delta_put,
             gamma,
-            theta_call: theta_call / 365.0, // Convert to daily theta
-            theta_put: theta_put / 365.0,
+            theta_call: theta_call // / 365.0, // Convert to daily theta
+            theta_put: theta_put // / 365.0,
             vega,
             rho_call,
             rho_put,
