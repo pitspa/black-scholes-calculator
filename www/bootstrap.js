@@ -171,7 +171,7 @@ function initializeCharts() {
                 y: {
                     title: {
                         display: true,
-                        text: 'Theta (daily)'
+                        text: 'Theta'
                     }
                 }
             }
