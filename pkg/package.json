@@ -1,0 +1,15 @@
+{
+  "name": "black-scholes-calculator",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "black_scholes_calculator_bg.wasm",
+    "black_scholes_calculator.js",
+    "black_scholes_calculator.d.ts"
+  ],
+  "main": "black_scholes_calculator.js",
+  "types": "black_scholes_calculator.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
